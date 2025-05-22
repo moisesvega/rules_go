@@ -732,6 +732,7 @@ def _recompile_external_deps(go, external_go_info, internal_archive, library_lab
                 cgo_exports = depset(transitive = [a.cgo_exports for a in deps]),
                 runfiles = go_info.runfiles,
                 mode = go.mode,
+                _headers = internal_archive._headers,
             )
         label_to_archive[label] = archive
 
