@@ -28,7 +28,6 @@ filegroup(
         exclude = [
             "src/**/*_test.go",
             "src/**/testdata/**",
-            "src/cmd/**",
             # Only used by tests, cgo fails with linux before 3.17
             "src/crypto/internal/sysrand/internal/seccomp/**",
             "src/log/slog/internal/benchmarks/**",
@@ -81,11 +80,19 @@ go_tool_binary(
     exec_compatible_with = {exec_compatible_with},
     ldflags = "-X main.rulesGoStdlibPrefix={}".format(RULES_GO_STDLIB_PREFIX),
     sdk = ":go_sdk",
+    # The .exe suffix is required on Windows and harmless on other platforms.
+    # Output attributes are not configurable, so we use it everywhere.
+    out_pack = "pack.exe",
 )
 
 non_go_reset_target(
     name = "builder_reset",
     dep = ":builder",
+)
+
+non_go_reset_target(
+    name = "pack_reset",
+    dep = ":pack.exe",
 )
 
 # TODO(jayconrod): Gazelle depends on this file directly. This dependency
@@ -99,6 +106,7 @@ package_list(
 
 declare_go_toolchains(
     builder = ":builder_reset",
+    pack = ":pack_reset",
     host_goos = "{goos}",
     sdk = ":go_sdk",
 )

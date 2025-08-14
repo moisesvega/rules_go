@@ -94,7 +94,7 @@ def emit_compilepkg(
         archives = archives + [go.coverdata]
 
     sdk = go.sdk
-    inputs_direct = (sources + embedsrcs + [sdk.package_list] +
+    inputs_direct = (sources + embedsrcs + [sdk.package_list, go.toolchain._pack] +
                      [archive.data.export_file for archive in archives])
     inputs_transitive = [sdk.headers, sdk.tools, go.stdlib.libs, headers]
     outputs = [out_lib, out_export]
@@ -103,6 +103,7 @@ def emit_compilepkg(
     shared_args.add_all(sources, before_each = "-src")
 
     compile_args = go.tool_args(go)
+    compile_args.add("-pack", go.toolchain._pack)
     compile_args.add_all(embedsrcs, before_each = "-embedsrc", expand_directories = False)
     compile_args.add_all(
         sources + [out_lib] + embedsrcs,
